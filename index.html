@@ -5,29 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sprint Capacity Optimizer | Team Velocity Tool</title>
+    <title>Sprint Capacity Planner | Agile Planning Tool</title>
     <meta name="title" content="Sprint Capacity Pro | Team Velocity Optimizer">
-    <meta name="description" content="Free, professional Sprint Capacity Calculator for Scrum Masters. Calculate team availability, manage leave, and forecast sprint velocity instantly.">
+    <meta name="description"
+        content="A professional Scrum Master Tool to calculate team availability, manage leave, and optimize sprint velocity.">
     <meta name="author" content="Eugen Rof">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://eugenrof.github.io/sprint-capacity-calculator/">
-    <meta property="og:title" content="Sprint Capacity Calculator | Velocity Tool">
+    <meta property="og:url" content="https://eugenrof.github.io/sprint-capacity-planner/">
+    <meta property="og:title" content="Sprint Capacity Planner | Agile Planning Tool">
     <meta property="og:description"
         content="Stop guessing your sprint commitment. Calculate real-time capacity based on team leave and allocation.">
-    <meta property="og:image" content="https://eugenrof.github.io/sprint-capacity-calculator/images/social-share.png">
+    <meta property="og:image" content="https://eugenrof.github.io/sprint-capacity-planner/images/social-share.png">
 
-    <meta name="twitter:card" content="https://eugenrof.github.io/sprint-capacity-calculator/images/social-share.png">
-    <meta name="twitter:title" content="Sprint Capacity Calculator">
+    <meta name="twitter:card" content="https://eugenrof.github.io/sprint-capacity-planner/images/social-share.png">
+    <meta name="twitter:title" content="Sprint Capacity planner">
     <meta name="twitter:description" content="Calculate real-time team capacity and sprint velocity.">
-    <meta name="twitter:image" content="https://eugenrof.github.io/sprint-capacity-calculator/images/social-share.png">
+    <meta name="twitter:image" content="https://eugenrof.github.io/sprint-capacity-planner/images/social-share.png">
 
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -39,7 +40,7 @@
     <div class="min-h-screen flex flex-col p-4 md:p-12">
         <header class="max-w-6xl mx-auto w-full mb-10">
             <div class="animate-fade-in">
-                <h1 class="text-4xl font-extrabold tracking-tight gradient-text">Sprint Capacity Calculator</h1>
+                <h1 class="text-4xl font-extrabold tracking-tight gradient-text">Sprint Capacity Planner</h1>
                 <p class="text-slate-500 mt-1">Optimize your velocity based on team availability</p>
             </div>
         </header>
@@ -64,19 +65,41 @@
                     </ul>
                 </section>
 
-                <section class="glass p-6 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4">
+                <section
+                    class="glass p-8 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 animate-slide-up">
+
                     <div class="input-group">
-                        <label for="sprintDays">Sprint Days</label>
-                        <input type="number" id="sprintDays" value="15" onchange="validateGlobal(this)">
+                        <label for="teamName"
+                            class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Team Name
+                            (Optional)</label>
+                        <input type="text" id="teamName" placeholder="e.g. Team Alpha"
+                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
+
                     <div class="input-group">
-                        <label for="publicHolidays">Public Holidays</label>
-                        <input type="number" id="publicHolidays" value="0" onchange="validateGlobal(this)">
+                        <label for="sprintDays"
+                            class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Sprint Length
+                            (Days)</label>
+                        <input type="number" id="sprintDays" value="15" onchange="validateGlobal(this)"
+                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
+
                     <div class="input-group">
-                        <label for="avgVelocity">Avg. Velocity</label>
-                        <input type="number" id="avgVelocity" value="45" onchange="validateGlobal(this)">
+                        <label for="publicHolidays"
+                            class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Public
+                            Holidays</label>
+                        <input type="number" id="publicHolidays" value="0" onchange="validateGlobal(this)"
+                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
+
+                    <div class="input-group">
+                        <label for="avgVelocity"
+                            class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Historical
+                            Velocity</label>
+                        <input type="number" id="avgVelocity" value="45" onchange="validateGlobal(this)"
+                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                    </div>
+
                 </section>
 
                 <div class="space-y-4">
@@ -138,8 +161,8 @@
                         class="result-card bg-white p-8 rounded-3xl shadow-xl border border-indigo-50 relative overflow-hidden">
                         <h2 class="text-slate-400 text-sm font-bold uppercase mb-1">Recommended Plan</h2>
                         <div class="flex items-baseline gap-2">
-                            <span id="resPlanVelocity" class="text-6xl font-black text-indigo-600">0</span>
-                            <span class="text-slate-400 font-medium text-lg">Points</span>
+                            <span id="resPlanVelocity" class="text-6xl font-black">0</span>
+                            <span class="text-slate-400 font-medium text-lg">Story Points</span>
                         </div>
                         <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
                             <div class="flex justify-between items-center">
@@ -157,7 +180,8 @@
                     </div>
 
                     <section class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Capacity Status Legend</h2>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Capacity Status
+                            Legend</h2>
                         <ul class="space-y-3 text-sm">
                             <li class="flex items-center gap-3">
                                 <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
