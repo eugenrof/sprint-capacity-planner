@@ -231,7 +231,7 @@ function exportToPDF() {
 
     const teamNameInput = document.getElementById('teamName').value.trim();
     const teamDisplayName = teamNameInput || "Team";
-    const primaryEmerald = [5, 150, 105];
+    const primaryEmerald = [16, 185, 129]; // Matches your Emerald-600
 
     // Header: Brand First | Team Name
     doc.setFontSize(22);
@@ -243,12 +243,13 @@ function exportToPDF() {
     doc.setTextColor(100, 116, 139);
     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
 
-    // Summary Table
+    // Summary Table - Updated to include Public Holidays
     doc.autoTable({
         startY: 35,
         head: [['Sprint Metric', 'Value']],
         body: [
             ['Sprint Length', document.getElementById('sprintDays').value + ' Days'],
+            ['Public Holidays', document.getElementById('publicHolidays').value + ' Days'],
             ['Calculated Capacity', document.getElementById('resCapacity').innerText],
             ['Recommended Velocity', document.getElementById('resPlanVelocity').innerText + ' Story Points']
         ],
@@ -257,12 +258,15 @@ function exportToPDF() {
     });
 
     // Detailed Table
-    const workingWindow = Math.max(0, document.getElementById('sprintDays').value - document.getElementById('publicHolidays').value);
+    const sprintLength = parseFloat(document.getElementById('sprintDays').value) || 0;
+    const holidayValue = parseFloat(document.getElementById('publicHolidays').value) || 0;
+    const workingWindow = Math.max(0, sprintLength - holidayValue);
+    
     const rows = team.map(m => [
         m.name,
         m.allocation + '%',
         m.daysOff,
-        ((workingWindow - m.daysOff) * (m.allocation / 100)).toFixed(1)
+        (Math.max(0, workingWindow - m.daysOff) * (m.allocation / 100)).toFixed(1)
     ]);
 
     doc.autoTable({
@@ -271,7 +275,7 @@ function exportToPDF() {
         body: rows,
         headStyles: { fillColor: primaryEmerald, halign: 'center' },
         styles: { halign: 'center' },
-        columnStyles: { 0: { halign: 'center' } } // Centered Member Names
+        columnStyles: { 0: { halign: 'center' } }
     });
 
     // File Name: Sprint_Capacity_Report_TeamName.pdf
