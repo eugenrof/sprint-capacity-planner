@@ -4,7 +4,6 @@
  * Year: 2026
  */
 
-// 1. Restore Default Team
 let team = [
     { name: 'Member Name 1', allocation: 100, daysOff: 0 },
     { name: 'Member Name 2', allocation: 100, daysOff: 0 },
@@ -15,7 +14,7 @@ let team = [
 
 document.addEventListener('DOMContentLoaded', () => {
     loadStateFromURL();
-    renderTable(); // This will trigger the initial calculation
+    renderTable();
 });
 
 /**
@@ -107,33 +106,26 @@ function validateGlobal(input) {
     let val = parseFloat(input.value);
     const sprintDaysInput = document.getElementById('sprintDays');
     const holidayInput = document.getElementById('publicHolidays');
-
     let currentSprintDays = parseFloat(sprintDaysInput.value) || 0;
 
-    // 1. Basic negative value check
     if (isNaN(val) || val < 0) {
         showToast("⚠️ Values cannot be negative. Resetting to 0.");
         input.value = 0;
         val = 0;
     }
 
-    // 2. Specific check for Public Holidays vs Sprint Days
     if (input.id === 'publicHolidays' && val > currentSprintDays) {
         showToast(`⚠️ Holidays cannot exceed Sprint Days (${currentSprintDays}).`);
         input.value = currentSprintDays;
     }
 
-    // 3. If Sprint Days are lowered, re-validate Public Holidays
     if (input.id === 'sprintDays') {
         const hVal = parseFloat(holidayInput.value) || 0;
-
-        // If holidays are greater than OR equal to the new sprint length
         if (hVal >= val) {
             showToast("⚠️ Holidays reset to 0 as they matched or exceeded sprint length.");
             holidayInput.value = 0;
         }
     }
-
     calculate();
 }
 
@@ -143,23 +135,17 @@ function updateMember(index, field, value) {
         calculate();
     } else {
         let num = parseFloat(value);
-
-        // 1. Basic negative value check
         if (isNaN(num) || num < 0) {
             showToast("⚠️ Values cannot be negative. Resetting to 0.");
             num = 0;
             team[index][field] = num;
-            renderTable(); // Force UI to show the reset 0
-        }
-        // 2. Specific check for Allocation % (cannot exceed 100)
-        else if (field === 'allocation' && num > 100) {
-            showToast("⚠️ Allocation cannot exceed 100%. Reset to 100%.");
+            renderTable();
+        } else if (field === 'allocation' && num > 100) {
+            showToast("⚠️ Allocation cannot exceed 100%. Capping at 100.");
             num = 100;
             team[index][field] = num;
-            renderTable(); // Force UI to show the 100 cap
-        }
-        // 3. Valid input
-        else {
+            renderTable();
+        } else {
             team[index][field] = num;
             calculate();
         }
@@ -199,11 +185,6 @@ function renderTable() {
     calculate();
 }
 
-/**
- * CALCULATION ENGINE
- * Baseline = Members * Sprint Days
- * Available = (Sprint Days - Holidays - Personal Days) * Allocation
- */
 function calculate() {
     const sprintDays = Math.max(0, parseFloat(document.getElementById('sprintDays').value) || 0);
     const holidays = Math.max(0, parseFloat(document.getElementById('publicHolidays').value) || 0);
@@ -219,8 +200,6 @@ function calculate() {
         totalAvailableDays += available;
     });
 
-    // Baseline is total team capacity for the full duration (ignoring holidays initially)
-    // This ensures holidays correctly drop the percentage and velocity.
     const baselinePotential = team.length * sprintDays;
     const capacityPerc = baselinePotential > 0 ? (totalAvailableDays / baselinePotential) : 0;
     const planVelocity = avgVelocity * capacityPerc;
@@ -246,7 +225,6 @@ function updateDashboard(totalDays, capacity, plan) {
 function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-
     const sDays = document.getElementById('sprintDays').value;
     const hDays = document.getElementById('publicHolidays').value;
     const velocity = document.getElementById('resPlanVelocity').innerText;
@@ -259,23 +237,13 @@ function exportToPDF() {
     doc.autoTable({
         startY: 30,
         head: [['Sprint Metric', 'Value']],
-        body: [
-            ['Sprint Duration', sDays + ' Days'],
-            ['Public Holidays', hDays + ' Days'],
-            ['Plan Velocity', velocity + ' Story Points'],
-            ['Calculated Capacity', cap]
-        ],
+        body: [['Sprint Duration', sDays + ' Days'], ['Public Holidays', hDays + ' Days'], ['Plan Velocity', velocity + ' Story Points'], ['Calculated Capacity', cap]],
         theme: 'grid',
         headStyles: { fillColor: [241, 245, 249], textColor: [79, 70, 229] }
     });
 
     const workingWindow = Math.max(0, sDays - hDays);
-    const tableRows = team.map(m => [
-        m.name,
-        m.allocation + "%",
-        m.daysOff,
-        Number(((workingWindow - m.daysOff) * (m.allocation / 100)).toFixed(1))
-    ]);
+    const tableRows = team.map(m => [m.name, m.allocation + "%", m.daysOff, Number(((workingWindow - m.daysOff) * (m.allocation / 100)).toFixed(1))]);
 
     doc.autoTable({
         head: [["Member Name", "Alloc %", "Days Off", "Avail. Days"]],
