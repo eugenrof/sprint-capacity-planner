@@ -74,4 +74,4 @@ To ensure maximum compatibility across all Markdown viewers, the tool uses the f
 ## ⚖️ License & Credits
 
 Developed by **Eugen Rof** (2026). Part of the **Scrum Master Toolset**.
-[GitHub Repository](https://www.google.com/search?q=https://github.com/eugenrof)
+[GitHub Repository](https://github.com/eugenrof/sprint-capacity-calculator)
