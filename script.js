@@ -237,7 +237,7 @@ function exportToPDF() {
 
     doc.setFontSize(10);
     doc.setTextColor(100, 116, 139);
-    doc.text(`Generated on ${new Date().toLocaleDateString()} • Powered by Eugen Rof`, 14, 28);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
 
     // Summary Table
     doc.autoTable({
@@ -271,7 +271,7 @@ function exportToPDF() {
         columnStyles: { 0: { halign: 'left' } }
     });
 
-    doc.save(`${teamDisplayName.replace(/\s+/g, '_')}_Sprint_Capacity_Report.pdf`);
+    doc.save(`Sprint_Capacity_Report_${teamDisplayName.replace(/\s+/g, '_')}.pdf`);
 }
 
 /**
