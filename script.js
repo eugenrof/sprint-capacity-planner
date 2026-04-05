@@ -79,7 +79,12 @@ function loadState() {
 function updateMainHeader(name) {
     const titleBase = "Sprint Capacity Planner";
     const h1 = document.querySelector('h1');
-    if (h1) h1.innerText = name.trim() ? `${name} | ${titleBase}` : titleBase;
+    
+    // Logic: If name exists, show "Page Title | Name", otherwise just "Page Title"
+    const newTitle = name.trim() ? `${titleBase} | ${name}` : titleBase;
+    
+    if (h1) h1.innerText = newTitle;
+    document.title = newTitle; // This also updates the browser tab title!
 }
 
 function renderTable() {
