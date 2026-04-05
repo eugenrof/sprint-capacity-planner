@@ -1,7 +1,3 @@
-Here is the updated `README.md`. I have optimized the **Technical Insights** section using Markdown code blocks for perfect rendering across all platforms and integrated the new validation logic into the **Key Features** section.
-
------
-
 # Sprint Capacity Optimizer | Team Velocity Tool
 
 ## 📋 Purpose & Professional Impact
