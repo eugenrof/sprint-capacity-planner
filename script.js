@@ -7,11 +7,11 @@
 
 // --- Initial State ---
 let team = [
-    { name: 'Member Name 1', allocation: 100, daysOff: 0 },
-    { name: 'Member Name 2', allocation: 100, daysOff: 0 },
-    { name: 'Member Name 3', allocation: 100, daysOff: 0 },
-    { name: 'Member Name 4', allocation: 100, daysOff: 0 },
-    { name: 'Member Name 5', allocation: 100, daysOff: 0 }
+    { name: 'Member 1', allocation: 100, daysOff: 0 },
+    { name: 'Member 2', allocation: 100, daysOff: 0 },
+    { name: 'Member 3', allocation: 100, daysOff: 0 },
+    { name: 'Member 4', allocation: 100, daysOff: 0 },
+    { name: 'Member 5', allocation: 100, daysOff: 0 }
 ];
 
 // --- Initialization ---
@@ -36,7 +36,6 @@ function saveState() {
     params.set('h', document.getElementById('publicHolidays').value);
     params.set('v', document.getElementById('avgVelocity').value);
 
-    // Efficiently encode team data to keep URL length manageable
     const teamData = team.map(m => `${encodeURIComponent(m.name)}|${m.allocation}|${m.daysOff}`).join(',');
     params.set('t', teamData);
 
@@ -79,8 +78,6 @@ function loadState() {
 function updateMainHeader(name) {
     const titleBase = "Sprint Capacity Planner";
     const h1 = document.querySelector('h1');
-    
-    // Logic: Brand first, then Team Name
     const newTitle = name.trim() ? `${titleBase} | ${name}` : titleBase;
     
     if (h1) h1.innerText = newTitle;
@@ -95,10 +92,11 @@ function renderTable() {
     team.forEach((member, index) => {
         const row = document.createElement('tr');
         row.className = "row-hover transition-colors group";
+        // text-center on mobile, text-left on md screens for the name input
         row.innerHTML = `
             <td class="px-6 py-4">
                 <input type="text" value="${member.name}" onchange="updateMember(${index}, 'name', this.value)" 
-                class="w-full bg-transparent font-semibold border-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all text-center">
+                class="w-full bg-transparent font-semibold border-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all text-center md:text-left">
             </td>
             <td class="px-6 py-4 text-center">
                 <input type="number" value="${member.allocation}" onchange="updateMember(${index}, 'allocation', this.value)" 
@@ -157,10 +155,9 @@ function updateDashboard(totalDays, capacity, plan) {
     const perc = capacity * 100;
     bar.style.width = Math.min(100, perc) + '%';
 
-    // Status coloring
-    let statusColor = "#ef4444"; // Default Red
-    if (perc >= 75) statusColor = "#10b981"; // Emerald
-    else if (perc >= 50) statusColor = "#f97316"; // Orange
+    let statusColor = "#ef4444"; 
+    if (perc >= 75) statusColor = "#10b981"; 
+    else if (perc >= 50) statusColor = "#f97316"; 
 
     bar.style.backgroundColor = statusColor;
     velocityText.style.color = statusColor;
@@ -231,9 +228,8 @@ function exportToPDF() {
 
     const teamNameInput = document.getElementById('teamName').value.trim();
     const teamDisplayName = teamNameInput || "Team";
-    const primaryEmerald = [16, 185, 129]; // Matches your Emerald-600
+    const primaryEmerald = [16, 185, 129]; 
 
-    // Header: Brand First | Team Name
     doc.setFontSize(22);
     doc.setTextColor(primaryEmerald[0], primaryEmerald[1], primaryEmerald[2]);
     const pdfTitle = teamNameInput ? `Sprint Capacity Planner | ${teamDisplayName}` : "Sprint Capacity Planner";
@@ -243,7 +239,6 @@ function exportToPDF() {
     doc.setTextColor(100, 116, 139);
     doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
 
-    // Summary Table - Updated to include Public Holidays
     doc.autoTable({
         startY: 35,
         head: [['Sprint Metric', 'Value']],
@@ -257,7 +252,6 @@ function exportToPDF() {
         theme: 'grid'
     });
 
-    // Detailed Table
     const sprintLength = parseFloat(document.getElementById('sprintDays').value) || 0;
     const holidayValue = parseFloat(document.getElementById('publicHolidays').value) || 0;
     const workingWindow = Math.max(0, sprintLength - holidayValue);
@@ -273,12 +267,17 @@ function exportToPDF() {
         startY: doc.lastAutoTable.finalY + 10,
         head: [["Member Name", "Allocation", "Days Off", "Available Days"]],
         body: rows,
+        // Centering all columns in PDF for visual balance
         headStyles: { fillColor: primaryEmerald, halign: 'center' },
         styles: { halign: 'center' },
-        columnStyles: { 0: { halign: 'center' } }
+        columnStyles: { 
+            0: { halign: 'center' },
+            1: { halign: 'center' },
+            2: { halign: 'center' },
+            3: { halign: 'center' }
+        }
     });
 
-    // File Name: Sprint_Capacity_Report_TeamName.pdf
     doc.save(`Sprint_Capacity_Report_${teamDisplayName.replace(/\s+/g, '_')}.pdf`);
 }
 
