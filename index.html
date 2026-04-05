@@ -19,7 +19,7 @@
     <meta property="og:image" content="https://eugenrof.github.io/sprint-capacity-planner/images/share-preview.png">
 
     <meta name="twitter:card" content="https://eugenrof.github.io/sprint-capacity-planner/images/share-preview.png">
-    <meta name="twitter:title" content="Sprint Capacity Planner">
+    <meta name="twitter:title" content="Sprint Capacity planner">
     <meta name="twitter:description" content="Calculate real-time team capacity and sprint velocity.">
     <meta name="twitter:image" content="https://eugenrof.github.io/sprint-capacity-planner/images/share-preview.png">
 
@@ -53,7 +53,7 @@
             <div class="lg:col-span-8 space-y-6 animate-slide-up">
 
                 <section class="bg-blue-50 border border-blue-100 p-5 rounded-2xl flex flex-col gap-3">
-                    <div class="flex items-center gap-2 shrink-0 justify-center md:justify-start">
+                    <div class="flex items-center gap-2 shrink-0 justify-start">
                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -61,7 +61,7 @@
                         <h3 class="text-blue-700 font-bold text-xs uppercase tracking-wider">Pro Tips</h3>
                     </div>
 
-                    <ul class="flex flex-col gap-2 text-[11px] text-blue-600 font-medium list-disc list-inside ml-1 text-center md:text-left">
+                    <ul class="flex flex-col gap-2 text-[11px] text-blue-600 font-medium list-disc list-inside ml-1 text-left">
                         <li>Click member names to edit them directly</li>
                         <li>Negative values auto-reset to 0</li>
                         <li>Copy the browser URL to share this specific plan</li>
@@ -69,25 +69,25 @@
                 </section>
 
                 <section class="glass p-8 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div class="input-group">
+                    <div class="input-group text-left">
                         <label for="teamName" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Team Name (Optional)</label>
                         <input type="text" id="teamName" placeholder="e.g. Team Alpha"
                             class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group text-left">
                         <label for="sprintDays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Sprint Length (Days)</label>
                         <input type="number" id="sprintDays" value="15" onchange="validateGlobal(this)"
                             class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group text-left">
                         <label for="publicHolidays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Public Holidays</label>
                         <input type="number" id="publicHolidays" value="0" onchange="validateGlobal(this)"
                             class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
                     </div>
 
-                    <div class="input-group">
+                    <div class="input-group text-left">
                         <label for="avgVelocity" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Historical Velocity</label>
                         <input type="number" id="avgVelocity" value="45" onchange="validateGlobal(this)"
                             class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
@@ -100,7 +100,7 @@
                             <table class="w-full min-w-[600px] text-left border-collapse">
                                 <thead>
                                     <tr class="bg-slate-50/50 text-slate-500 text-xs uppercase font-bold">
-                                        <th class="px-6 py-4">Member Name</th>
+                                        <th class="px-6 py-4 text-center md:text-left">Member Name</th>
                                         <th class="px-6 py-4 text-center">Alloc %</th>
                                         <th class="px-6 py-4 text-center">Days Off</th>
                                         <th class="px-6 py-4 text-center">Available</th>
@@ -170,7 +170,7 @@
                         </div>
                     </div>
 
-                    <section class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                    <section class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm text-left">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Capacity Legend</h2>
                         <ul class="space-y-3 text-sm">
                             <li class="flex items-center gap-3">
