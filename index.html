@@ -21,7 +21,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://eugenrof.github.io/sprint-capacity-planner/">
     <meta name="twitter:title" content="Sprint Capacity Planner">
-    <meta name="twitter:description" content="Calculate real-time team capacity and sprint velocity.">
+    <meta name="twitter:description" content="A free, open-access utility to enhance sprint predictability. Align team availability into a data-driven delivery forecast.">
     <meta name="twitter:image" content="https://eugenrof.github.io/sprint-capacity-planner/images/share-preview.png">
 
     <meta name="theme-color" content="#10b981">
@@ -62,36 +62,62 @@
                     </div>
 
                     <ul class="flex flex-col gap-2 text-[11px] text-blue-600 font-medium list-disc list-inside ml-1 text-left">
-                        <li>Add/remove team members from the list</li>
-                        <li>Click member names to edit them directly</li>
-                        <li>Negative values auto-reset to 0</li>
-                        <li>Use the <strong>"Share Plan Link"</strong> button to send your setup to teammates</li>
+                        <li>Define Sprint Dates to provide context for your planning report</li>
+                        <li>Add/remove team members and edit names directly in the table</li>
+                        <li>The system automatically prevents End Dates from being set before Start Dates</li>
+                        <li>Use <strong>"Share Plan Link"</strong> to save or send your current configuration</li>
                     </ul>
                 </section>
 
-                <section class="glass p-8 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div class="input-group text-left">
-                        <label for="teamName" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 flex justify-between">Team Name (Optional)</label>
-                        <input type="text" id="teamName" placeholder="e.g. Team Alpha" maxlength="25"
-                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                <section class="glass p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
+                    
+                    <div class="mb-8 pb-8 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Sprint Timeline
+                        </h3>
+                        
+                        <div class="timeline-wrapper">
+                            <div class="input-group text-left">
+                                <label for="startDate" class="timeline-label">Start Date</label>
+                                <input type="date" id="startDate" onchange="validateGlobal(this)"
+                                    class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                            </div>
+
+                            <div class="input-group text-left">
+                                <label for="endDate" class="timeline-label">End Date</label>
+                                <input type="date" id="endDate" onchange="validateGlobal(this)"
+                                    class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="input-group text-left">
-                        <label for="sprintDays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Sprint Length (Days)</label>
-                        <input type="number" id="sprintDays" value="15" onchange="validateGlobal(this)"
-                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="input-group text-left">
+                            <label for="teamName" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 flex justify-between">Team Name (Optional)</label>
+                            <input type="text" id="teamName" placeholder="e.g. Team Alpha" maxlength="50"
+                                class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                        </div>
 
-                    <div class="input-group text-left">
-                        <label for="publicHolidays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Public Holidays (Days)</label>
-                        <input type="number" id="publicHolidays" value="0" onchange="validateGlobal(this)"
-                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
-                    </div>
+                        <div class="input-group text-left">
+                            <label for="sprintDays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Sprint Length (Days)</label>
+                            <input type="number" id="sprintDays" value="10" onchange="validateGlobal(this)"
+                                class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                        </div>
 
-                    <div class="input-group text-left">
-                        <label for="avgVelocity" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Average Velocity (Story Points)</label>
-                        <input type="number" id="avgVelocity" value="45" onchange="validateGlobal(this)"
-                            class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                        <div class="input-group text-left">
+                            <label for="publicHolidays" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Public Holidays (Days)</label>
+                            <input type="number" id="publicHolidays" value="0" onchange="validateGlobal(this)"
+                                class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                        </div>
+
+                        <div class="input-group text-left">
+                            <label for="avgVelocity" class="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 block">Average Velocity (Story Points)</label>
+                            <input type="number" id="avgVelocity" value="45" onchange="validateGlobal(this)"
+                                class="w-full bg-white border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+                        </div>
                     </div>
                 </section>
 
@@ -159,7 +185,6 @@
                             </svg>
                             Share Plan Link
                         </button>
-
                     </div>
 
                     <div class="result-card bg-white p-8 rounded-3xl shadow-xl border border-indigo-50 relative overflow-hidden">
@@ -205,8 +230,8 @@
         </main>
 
         <footer class="max-w-6xl mx-auto w-full mt-16 pb-8 border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
-            <div>&copy; 2026 <span class="font-semibold text-slate-700">Eugen Rof</span> | Scrum Master Toolset</div>
-            <a href="https://github.com/eugenrof/sprint-capacity-planner" target="_blank" class="hover:text-indigo-600 font-medium transition-colors">GitHub Repository</a>
+            <div>&copy; 2026 <span class="font-semibold text-slate-700">Eugen Rof</span> | <span class="text-emerald-600 font-medium"><strong>Scrum Master Toolset</strong></span></div>
+            <a href="https://github.com/eugenrof/sprint-capacity-planner" target="_blank" class="hover:text-indigo-600 font-medium transition-colors"><u><strong>GitHub Source</strong></u></a>
         </footer>
     </div>
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
