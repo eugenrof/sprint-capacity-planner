@@ -5,7 +5,6 @@
  * Description: Agile planning tool with LocalStorage persistence and on-demand Share Links.
  */
 
-// --- Initial State ---
 let team = [
     { name: 'Member 1', allocation: 100, daysOff: 0 },
     { name: 'Member 2', allocation: 100, daysOff: 0 },
