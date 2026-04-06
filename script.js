@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const teamNameInput = document.getElementById('teamName');
     teamNameInput.addEventListener('input', (e) => {
         const value = e.target.value;
-        if (value.length >= 50) {
+        // Updated limit to 25
+        if (value.length >= 25) {
             showToast("⚠️ Team name reached the 25 character limit");
         }
         updateMainHeader(value);
@@ -35,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function saveState() {
     const rawName = document.getElementById('teamName').value;
     const stateToSave = {
-        teamName: rawName.substring(0, 50),
+        // Updated limit to 25
+        teamName: rawName.substring(0, 25),
         startDate: document.getElementById('startDate').value,
         endDate: document.getElementById('endDate').value,
         sprintDays: document.getElementById('sprintDays').value,
@@ -51,12 +53,14 @@ function loadState() {
     
     if (params.has('t') || params.has('s')) {
         try {
-            const teamName = (params.get('teamName') || "").substring(0, 50);
+            // Updated limit to 25
+            const teamName = (params.get('teamName') || "").substring(0, 25);
             document.getElementById('teamName').value = teamName;
             updateMainHeader(teamName);
 
             document.getElementById('startDate').value = params.get('sd') || "";
             document.getElementById('endDate').value = params.get('ed') || "";
+            // Default 15 days
             document.getElementById('sprintDays').value = params.get('s') || 15;
             document.getElementById('publicHolidays').value = params.get('h') || 0;
             document.getElementById('avgVelocity').value = params.get('v') || 45;
@@ -85,11 +89,13 @@ function loadState() {
     if (localData) {
         try {
             const savedData = JSON.parse(localData);
-            const teamName = (savedData.teamName || "").substring(0, 50);
+            // Updated limit to 25
+            const teamName = (savedData.teamName || "").substring(0, 25);
             document.getElementById('teamName').value = teamName;
             updateMainHeader(teamName);
             document.getElementById('startDate').value = savedData.startDate || "";
             document.getElementById('endDate').value = savedData.endDate || "";
+            // Default 15 days
             document.getElementById('sprintDays').value = savedData.sprintDays || 15;
             document.getElementById('publicHolidays').value = savedData.holidays || 0;
             document.getElementById('avgVelocity').value = savedData.velocity || 45;
@@ -130,7 +136,8 @@ function shareConfiguration() {
 function updateMainHeader(name) {
     const titleBase = "Sprint Capacity Planner";
     const h1 = document.querySelector('h1');
-    const cleanName = name.trim().substring(0, 50);
+    // Updated limit to 25
+    const cleanName = name.trim().substring(0, 25);
     const newTitle = cleanName ? `${titleBase} | ${cleanName}` : titleBase;
     
     if (h1) h1.innerText = newTitle;
@@ -274,7 +281,6 @@ function validateGlobal(input) {
         input.value = 0;
     }
 
-    // Date Validation: Ensure End Date is after Start Date
     if (input.id === 'startDate' || input.id === 'endDate') {
         const start = new Date(startDateInput.value);
         const end = new Date(endDateInput.value);
@@ -308,6 +314,7 @@ function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
+    // Updated limit to 25
     const teamNameInput = document.getElementById('teamName').value.trim().substring(0, 25);
     const teamDisplayName = teamNameInput || "Team";
     const primaryEmerald = [16, 185, 129]; 
