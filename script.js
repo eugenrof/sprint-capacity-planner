@@ -235,16 +235,30 @@ function updateMember(index, field, value) {
         saveState();
     } else {
         let num = parseFloat(value) || 0;
+        
+        // 1. Common validation: No negative numbers
         if (num < 0) {
             showToast("⚠️ Values cannot be negative.");
             num = 0;
         }
+        
+        // 2. Specific validation for Allocation
         if (field === 'allocation' && num > 100) {
             showToast("⚠️ Allocation capped at 100%.");
             num = 100;
         }
+
+        // 3. NEW: Specific validation for Days Off (cannot exceed Sprint Length)
+        if (field === 'daysOff') {
+            const sprintLength = parseFloat(document.getElementById('sprintDays').value) || 0;
+            if (num > sprintLength) {
+                showToast(`⚠️ Days off capped at Sprint Length (${sprintLength} days).`);
+                num = sprintLength;
+            }
+        }
+
         team[index][field] = num;
-        renderTable();
+        renderTable(); // Re-render to show the corrected value in the input
     }
 }
 
