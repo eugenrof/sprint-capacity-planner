@@ -124,7 +124,7 @@ body {
 
 .btn-export svg { color: #334155 !important; }
 
-/* --- Reset Button (New High-Visibility Style) --- */
+/* --- Reset Button (Dark Slate to Red Hover) --- */
 .btn-reset {
     display: flex;
     align-items: center;
@@ -134,23 +134,30 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #ef4444; 
-    background: rgba(239, 68, 68, 0.08);
-    border: 1.5px solid rgba(239, 68, 68, 0.2);
+    
+    /* Default: High-Visibility Dark Slate */
+    color: #334155; 
+    background: #e2e8f0; 
+    border: 1.5px solid #94a3b8;
+    
     border-radius: 0.75rem;
     transition: all 0.2s ease;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .btn-reset:hover {
-    background: rgba(239, 68, 68, 0.15);
+    /* Hover: Transition to Warning Red */
+    background: #fee2e2;
+    color: #ef4444;
     border-color: #ef4444;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
     transform: scale(1.03);
 }
 
 .btn-reset svg {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke: currentColor;
 }
 
 .btn-reset:hover svg {
