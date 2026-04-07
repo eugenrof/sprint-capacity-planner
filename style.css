@@ -42,21 +42,21 @@ body {
     
     .overflow-x-auto {
         -webkit-overflow-scrolling: touch;
-        margin: 0 -0.5rem; /* Better table spacing on mobile */
+        margin: 0 -0.5rem;
     }
 
     header h1 {
         font-size: 1.75rem !important;
     }
 
-    /* Fix for iOS Date Input Overflow */
+    /* Strict alignment for mobile fields to prevent iPhone overflow */
     input[type="date"], 
     input[type="text"], 
     input[type="number"] {
         width: 100% !important;
-        max-width: 100% !important; /* Forces alignment */
-        min-width: 0 !important;    /* Prevents grid blowout */
-        font-size: 16px !important; /* Prevents auto-zoom on iOS */
+        max-width: 100% !important;
+        min-width: 0 !important;
+        font-size: 16px !important; /* Prevents iOS auto-zoom */
     }
 }
 
@@ -94,10 +94,33 @@ input[type=number] {
     -moz-appearance: number-input;
 }
 
+/* --- Date Picker Styling (Centered Text + Icon on Right) --- */
+input[type="date"] {
+    text-align: center !important;
+    display: block !important;
+    position: relative;
+    /* Extra right/left padding ensures text stays centered and clear of the icon */
+    padding-right: 2.5rem !important; 
+    padding-left: 2.5rem !important;
+    min-height: 52px;
+}
+
+/* Position the icon absolutely so it doesn't push the centered text */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    margin: 0 !important;
+    padding: 0;
+    filter: invert(0.4); /* Matches the slate/emerald theme */
+}
+
 /* --- Form Inputs --- */
 .input-group { 
     width: 100%; 
-    min-width: 0; /* Important for flex/grid children */
+    min-width: 0;
 }
 
 .input-group label {
@@ -114,14 +137,8 @@ input[type=number] {
     padding: 0 1rem; font-weight: 500;
     transition: var(--transition-standard); color: #1e293b;
     font-size: 16px; 
-    box-sizing: border-box; /* Ensures padding doesn't add to width */
-}
-
-/* Fix for date input specifically on iOS */
-input[type="date"] {
-    min-height: 52px;
-    display: flex;
-    align-items: center;
+    box-sizing: border-box;
+    text-align: center; /* Centers text in Sprint Name and other text fields */
 }
 
 input:focus {
