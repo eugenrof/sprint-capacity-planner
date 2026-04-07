@@ -6,7 +6,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* Basic reset to ensure padding doesn't cause overflow */
+/* Basic reset */
 * {
     box-sizing: border-box;
 }
@@ -17,7 +17,8 @@
     --teal-main: #0d9488;
     --glass-bg: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.5);
-    --transition-standard: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Smoother transition without the "bounce" to prevent flickers */
+    --transition-standard: all 0.2s ease-in-out;
 }
 
 body {
@@ -34,8 +35,8 @@ body {
     overflow-x: hidden;
 }
 
-/* --- Glassmorphism Effect & Interactive Hover --- */
-.glass, .timeline-wrapper {
+/* --- Glassmorphism Effect --- */
+.glass {
     background: var(--glass-bg);
     backdrop-filter: blur(12px) saturate(160%);
     -webkit-backdrop-filter: blur(12px) saturate(160%);
@@ -43,18 +44,18 @@ body {
     box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
     border-radius: 1.25rem;
     transition: var(--transition-standard);
-    will-change: transform, box-shadow;
+    will-change: box-shadow, border-color;
     overflow: hidden;
+    backface-visibility: hidden;
 }
 
-.glass:hover, .timeline-wrapper:hover {
-    transform: translateY(-5px);
+/* Removed translateY to prevent flicker on card edges */
+.glass:hover {
     border-color: rgba(16, 185, 129, 0.4);
-    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+    box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
 }
 
-/* Highlight labels when section is hovered */
-.glass:hover label, .timeline-wrapper:hover .timeline-label {
+.glass:hover label {
     color: var(--emerald-main);
     transition: color 0.3s ease;
 }
@@ -67,8 +68,17 @@ body {
     font-weight: 800;
 }
 
-/* --- Buttons --- */
+/* --- Buttons (Flicker-Free) --- */
+.btn-primary, .btn-export, .btn-share {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    backface-visibility: hidden;
+    transform: translateZ(0); /* Hardware acceleration */
+}
 
+/* Removed translateY. Added a subtle scale and shadow increase instead. */
 .btn-primary {
     background: var(--emerald-main);
     color: white;
@@ -76,11 +86,13 @@ body {
     border-radius: 0.75rem;
     font-weight: 700;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--emerald-hover);
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
 }
 
 .btn-primary::after {
@@ -91,24 +103,15 @@ body {
     transform: rotate(30deg);
     transition: all 0.6s ease;
 }
-
 .btn-primary:hover::after { left: 120%; }
 
-.btn-primary:hover {
-    background: var(--emerald-hover);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-}
-
 .btn-export {
-    background: rgba(16, 185, 129, 0.28) !important;
+    background: rgba(16, 185, 129, 0.15) !important;
     color: #1e293b !important;
     padding: 0.75rem 1.75rem;
     border-radius: 0.75rem;
     font-weight: 700;
-    border: 1.5px solid rgba(16, 185, 129, 0.5) !important;
-    cursor: pointer;
-    transition: var(--transition-standard);
+    border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -116,38 +119,16 @@ body {
 }
 
 .btn-export:hover {
-    background: rgba(16, 185, 129, 0.45) !important;
-    transform: translateY(-3px);
+    background: rgba(16, 185, 129, 0.25) !important;
+    transform: scale(1.02);
     border-color: var(--emerald-main) !important;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
 }
 
-.btn-export svg {
-    color: #334155 !important;
-}
+.btn-export svg { color: #334155 !important; }
 
-.btn-share {
-    background: rgba(13, 148, 136, 0.25);
-    color: #0f4c4a;
-    padding: 0.75rem 1.75rem;
-    border-radius: 0.75rem;
-    font-weight: 700;
-    border: 1.5px solid rgba(13, 148, 136, 0.5);
-    cursor: pointer;
-    transition: var(--transition-standard);
-}
-
-.btn-share:hover {
-    background: rgba(13, 148, 136, 0.4);
-    transform: translateY(-3px);
-    border-color: var(--teal-main);
-    box-shadow: 0 6px 15px rgba(13, 148, 136, 0.2);
-}
-
-/* --- Form Inputs (Responsive Fix) --- */
-.input-group {
-    width: 100%;
-}
+/* --- Form Inputs --- */
+.input-group { width: 100%; }
 
 .input-group label {
     display: block; font-size: 0.7rem; font-weight: 800;
@@ -161,9 +142,8 @@ body {
     border: 1px solid #e2e8f0; border-radius: 0.75rem;
     padding: 0.65rem 0.9rem; font-weight: 500;
     transition: all 0.2s ease; color: #1e293b;
-    /* iPhone Fixes */
     -webkit-appearance: none;
-    font-size: 16px; /* Prevents iOS auto-zoom shift */
+    font-size: 16px; /* iPhone fix */
 }
 
 input:focus {
@@ -183,30 +163,6 @@ thead th {
 
 .row-hover:hover { 
     background-color: rgba(16, 185, 129, 0.08); 
-}
-
-/* --- Timeline Wrapper (Responsive Logic) --- */
-.timeline-wrapper {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(8px);
-    padding: 1rem;
-    display: grid;
-    grid-template-columns: 1fr; /* Stacked by default for iPhone/Mobile */
-    gap: 1rem;
-    position: relative;
-    width: 100%;
-}
-
-@media (min-width: 768px) {
-    .timeline-wrapper { 
-        grid-template-columns: 1fr 1fr; /* Side-by-side for Desktop */
-        gap: 2rem; 
-        padding: 1.25rem;
-    }
-    .timeline-wrapper::after {
-        content: ""; position: absolute; left: 50%; top: 20%; bottom: 20%;
-        width: 1px; background: rgba(226, 232, 240, 0.8);
-    }
 }
 
 /* --- Progress Bar --- */
