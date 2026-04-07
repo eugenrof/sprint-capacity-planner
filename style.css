@@ -53,6 +53,11 @@ body {
     box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
 }
 
+.glass:hover label {
+    color: var(--emerald-main);
+    transition: color 0.3s ease;
+}
+
 /* --- Typography --- */
 .gradient-text {
     background: linear-gradient(135deg, var(--emerald-main) 0%, var(--teal-main) 100%);
@@ -61,7 +66,7 @@ body {
     font-weight: 800;
 }
 
-/* --- Buttons --- */
+/* --- Buttons (Flicker-Free) --- */
 .btn-primary, .btn-export, .btn-share {
     cursor: pointer;
     position: relative;
@@ -81,6 +86,22 @@ body {
     box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
 
+.btn-primary:hover {
+    background: var(--emerald-hover);
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: -50%; left: -60%; width: 20%; height: 200%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+}
+.btn-primary:hover::after { left: 120%; }
+
 .btn-export {
     background: rgba(16, 185, 129, 0.15) !important;
     color: #1e293b !important;
@@ -94,7 +115,16 @@ body {
     gap: 0.5rem;
 }
 
-/* --- Reset Button --- */
+.btn-export:hover {
+    background: rgba(16, 185, 129, 0.25) !important;
+    transform: scale(1.02);
+    border-color: var(--emerald-main) !important;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+}
+
+.btn-export svg { color: #334155 !important; }
+
+/* --- Reset Button (Dark Slate to Red Hover) --- */
 .btn-reset {
     display: flex;
     align-items: center;
@@ -104,74 +134,57 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    
+    /* Default: High-Visibility Dark Slate */
     color: #334155; 
     background: #e2e8f0; 
     border: 1.5px solid #94a3b8;
+    
     border-radius: 0.75rem;
     transition: all 0.2s ease;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* --- Form Inputs (STRICT MOBILE ALIGNMENT) --- */
-.input-group { 
-    width: 100%; 
+.btn-reset:hover {
+    /* Hover: Transition to Warning Red */
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    transform: scale(1.03);
 }
+
+.btn-reset svg {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke: currentColor;
+}
+
+.btn-reset:hover svg {
+    transform: rotate(-180deg);
+}
+
+/* --- Form Inputs --- */
+.input-group { width: 100%; }
 
 .input-group label {
-    display: block; 
-    font-size: 0.7rem; 
-    font-weight: 800;
-    text-transform: uppercase; 
-    color: #64748b; 
-    margin-bottom: 0.4rem;
-    letter-spacing: 0.025em;
+    display: block; font-size: 0.7rem; font-weight: 800;
+    text-transform: uppercase; color: #64748b; margin-bottom: 0.4rem;
+    letter-spacing: 0.025em; transition: color 0.3s ease;
 }
 
 .input-group input {
-    /* 1. Forces absolute width matching even on mobile Safari */
-    width: 100% !important; 
-    min-width: 100% !important;
-    display: inline-flex !important; /* Fixes internal alignment for iOS date icons */
-    align-items: center;
-    height: 52px !important; 
-    background: #ffffff !important; /* Force solid white background */
-    border: 1px solid #e2e8f0; 
-    border-radius: 0.75rem;
-    padding: 0 1rem !important; 
-    font-weight: 600;
-    color: #1e293b;
-    font-size: 16px;
-    outline: none;
-    transition: all 0.2s ease;
-    box-sizing: border-box; /* Ensures padding doesn't push the width out */
-    
-    /* 2. Reset browser defaults */
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-}
-
-/* 3. Re-inject the native indicators while keeping layout fixed */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: inner-spin-button !important;
-    opacity: 1 !important;
-    height: 30px;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: block !important;
-    background-color: transparent;
-    opacity: 1 !important;
-    cursor: pointer;
-}
-
-/* Specific fix for Date display text on mobile Safari */
-input[type="date"] {
-    line-height: 52px;
+    width: 100%; 
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0; border-radius: 0.75rem;
+    padding: 0.65rem 0.9rem; font-weight: 500;
+    transition: all 0.2s ease; color: #1e293b;
+    -webkit-appearance: none;
+    font-size: 16px; 
 }
 
 input:focus {
+    outline: none !important;
     border-color: #10b981 !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
