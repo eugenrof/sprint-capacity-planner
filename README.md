@@ -14,6 +14,7 @@ In the **Scrum Framework**, the Sprint Planning event is the heartbeat of a team
 * **Efficiency**: Reduces the time spent on manual spreadsheets or fighting complex configurations in heavy Jira/Azure DevOps environments during live planning sessions.
 * **Transparency**: Provides a visual, shareable "source of truth" that helps **Product Owners** and stakeholders understand exactly why a team’s velocity might fluctuate in a specific sprint (e.g., due to public holidays or team training).
 * **Zero Overhead**: A focused, high-utility micro-app designed for immediate, zero-setup capacity modeling that can be exported or shared instantly.
+* **Mobile-First Design**: Optimized for any device. Whether on a desktop monitor or a mobile phone during a breakout session, the interface scales seamlessly for data entry.
 
 ## 📊 Reference Baseline
 
