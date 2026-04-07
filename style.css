@@ -180,6 +180,15 @@ thead th {
     letter-spacing: 0.05em;
 }
 
+#teamBody tr {
+    transition: background-color 0.2s ease;
+}
+
+/* Row Hover Color (Light Emerald Tint) */
+#teamBody tr:hover {
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
 #teamBody tr td {
     padding: 0.75rem 0.5rem;
     text-align: center !important;
