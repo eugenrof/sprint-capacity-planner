@@ -156,7 +156,7 @@ body {
 
 .btn-reset:hover svg { transform: rotate(-180deg); }
 
-/* --- Form Inputs --- */
+/* --- Form Inputs (Alignment Fix) --- */
 .input-group { width: 100%; }
 
 .input-group label {
@@ -165,33 +165,47 @@ body {
     letter-spacing: 0.025em; transition: color 0.3s ease;
 }
 
+/* Force every input type to be identical in size */
 .input-group input {
     width: 100%; 
+    height: 52px; /* Fixed height ensures Start/End Date match others */
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #e2e8f0; 
     border-radius: 0.75rem;
-    padding: 0.65rem 0.9rem; 
-    font-weight: 500;
+    padding: 0 1rem; 
+    font-weight: 600;
     transition: all 0.2s ease; 
     color: #1e293b;
-    font-size: 16px; 
-    /* Webkit appearance reset to show arrows */
+    font-size: 16px;
+    display: block;
+    -webkit-appearance: none; /* Reset first to build clean */
+    appearance: none;
+}
+
+/* Specific resets for Number and Date to show icons while maintaining height */
+input[type="number"] {
     -webkit-appearance: number-input;
     appearance: auto;
 }
 
-/* Force Full Opacity on Up/Down Buttons */
+input[type="date"] {
+    -webkit-appearance: listbox; /* This helps Safari/iOS keep it looking like a field */
+    appearance: auto;
+}
+
+/* Force Full Opacity and Visibility for Icons */
 input::-webkit-inner-spin-button,
 input::-webkit-outer-spin-button {
     -webkit-appearance: inner-spin-button !important;
     opacity: 1 !important;
+    height: 24px;
     cursor: pointer;
 }
 
-/* Force Full Opacity on Calendar Icon */
 input::-webkit-calendar-picker-indicator {
     opacity: 1 !important;
     cursor: pointer;
+    padding: 2px;
 }
 
 input:focus {
