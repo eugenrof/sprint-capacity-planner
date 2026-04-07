@@ -2,7 +2,7 @@
  * Sprint Capacity Planner
  * Author: Eugen Rof
  * Year: 2026
- * Description: Agile planning tool with LocalStorage persistence and on-demand Share Links.
+ * Description: Agile planning tool with Base64 encoding, dynamic color sync, and professional PDF export.
  */
 
 let team = [
@@ -13,167 +13,100 @@ let team = [
     { name: 'Member 5', allocation: 100, daysOff: 0 }
 ];
 
-// --- Initialization ---
+let startPicker, endPicker;
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Flatpickr
+    startPicker = flatpickr("#startDate", {
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr) {
+            const currentEnd = document.getElementById('endDate').value;
+            if (currentEnd && new Date(dateStr) > new Date(currentEnd)) {
+                showToast("⚠️ Start date cannot be after end date");
+                startPicker.clear();
+            } else {
+                if (endPicker) endPicker.set('minDate', dateStr);
+                calculate();
+                saveState();
+            }
+        }
+    });
+
+    endPicker = flatpickr("#endDate", {
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr) {
+            const currentStart = document.getElementById('startDate').value;
+            if (currentStart && new Date(dateStr) < new Date(currentStart)) {
+                showToast("⚠️ End date cannot be before start date");
+                endPicker.clear();
+            } else {
+                if (startPicker) startPicker.set('maxDate', dateStr);
+                calculate();
+                saveState();
+            }
+        }
+    });
+
     loadState();
     renderTable();
 
+    // 2. Team Name Validation
     const teamNameInput = document.getElementById('teamName');
-    teamNameInput.addEventListener('input', (e) => {
-        const value = e.target.value;
-        if (value.length >= 50) {
-            showToast("⚠️ Team name reached the 50 character limit");
+    if (teamNameInput) {
+        teamNameInput.addEventListener('input', (e) => {
+            const titleValue = e.target.value;
+            if (titleValue.length >= 25) {
+                if (titleValue.length > 25) {
+                    e.target.value = titleValue.substring(0, 25);
+                }
+                showToast("⚠️ Team name reached the 25 character limit");
+            }
+            updateMainHeader(e.target.value);
+            saveState();
+        });
+    }
+
+    // Global Input Listeners
+    ['sprintDays', 'publicHolidays', 'avgVelocity'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => {
+                if (parseFloat(el.value) < 0) {
+                    el.value = 0;
+                    showToast("⚠️ Values cannot be negative");
+                }
+                calculate();
+            });
         }
-        updateMainHeader(value);
-        saveState();
     });
+
+    calculate(); 
 });
 
 /**
- * Persistence & State Management
+ * Formats numbers to hide .0 for whole numbers
  */
-function saveState() {
-    const rawName = document.getElementById('teamName').value;
-    const stateToSave = {
-        teamName: rawName.substring(0, 50),
-        sprintDays: document.getElementById('sprintDays').value,
-        holidays: document.getElementById('publicHolidays').value,
-        velocity: document.getElementById('avgVelocity').value,
-        team: team
-    };
-    localStorage.setItem('sprintPlannerState', JSON.stringify(stateToSave));
+function formatNum(num) {
+    return Number.isInteger(num) ? num.toString() : num.toFixed(1);
 }
 
-function loadState() {
-    const params = new URLSearchParams(window.location.search);
-    
-    if (params.has('t') || params.has('s')) {
-        try {
-            const teamName = (params.get('teamName') || "").substring(0, 50);
-            document.getElementById('teamName').value = teamName;
-            updateMainHeader(teamName);
-
-            document.getElementById('sprintDays').value = params.get('s') || 15;
-            document.getElementById('publicHolidays').value = params.get('h') || 0;
-            document.getElementById('avgVelocity').value = params.get('v') || 45;
-
-            const teamParam = params.get('t');
-            if (teamParam) {
-                team = teamParam.split(',').map(str => {
-                    const [name, allocation, daysOff] = str.split('|');
-                    return {
-                        name: decodeURIComponent(name),
-                        allocation: parseFloat(allocation) || 100,
-                        daysOff: parseFloat(daysOff) || 0
-                    };
-                });
-            }
-            saveState();
-            window.history.replaceState(null, null, window.location.pathname);
-            showToast("✅ Shared plan loaded and saved!");
-            return; 
-        } catch (e) {
-            console.error("URL State Recovery Failed", e);
-        }
-    }
-
-    const localData = localStorage.getItem('sprintPlannerState');
-    if (localData) {
-        try {
-            const savedData = JSON.parse(localData);
-            const teamName = (savedData.teamName || "").substring(0, 50);
-            document.getElementById('teamName').value = teamName;
-            updateMainHeader(teamName);
-            document.getElementById('sprintDays').value = savedData.sprintDays || 15;
-            document.getElementById('publicHolidays').value = savedData.holidays || 0;
-            document.getElementById('avgVelocity').value = savedData.velocity || 45;
-            team = savedData.team || team;
-        } catch (e) {
-            console.error("LocalStorage Recovery Failed", e);
-        }
-    }
-}
-
-/**
- * Generate Share Link
- */
-function shareConfiguration() {
-    const teamName = document.getElementById('teamName').value;
-    const sprintDays = document.getElementById('sprintDays').value;
-    const holidays = document.getElementById('publicHolidays').value;
-    const velocity = document.getElementById('avgVelocity').value;
-
-    const params = new URLSearchParams();
-    params.set('teamName', teamName);
-    params.set('s', sprintDays);
-    params.set('h', holidays);
-    params.set('v', velocity);
-
-    const teamData = team.map(m => `${encodeURIComponent(m.name)}|${m.allocation}|${m.daysOff}`).join(',');
-    params.set('t', teamData);
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-
-    navigator.clipboard.writeText(shareUrl).then(() => {
-        showToast("🔗 Share link copied to clipboard!");
-    }).catch(err => {
-        console.error('Could not copy text: ', err);
-    });
-}
-
-/**
- * UI Rendering & Logic
- */
-function updateMainHeader(name) {
-    const titleBase = "Sprint Capacity Planner";
-    const h1 = document.querySelector('h1');
-    const cleanName = name.trim().substring(0, 50);
-    const newTitle = cleanName ? `${titleBase} | ${cleanName}` : titleBase;
-    
-    if (h1) h1.innerText = newTitle;
-    document.title = newTitle; 
-}
-
-function renderTable() {
-    const body = document.getElementById('teamBody');
-    if (!body) return;
-    body.innerHTML = '';
-
-    team.forEach((member, index) => {
-        const row = document.createElement('tr');
-        row.className = "row-hover transition-colors group";
-        row.innerHTML = `
-            <td class="px-6 py-4">
-                <input type="text" value="${member.name}" onchange="updateMember(${index}, 'name', this.value)" 
-                class="w-full bg-transparent font-semibold border-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all text-center md:text-left">
-            </td>
-            <td class="px-6 py-4 text-center">
-                <input type="number" value="${member.allocation}" onchange="updateMember(${index}, 'allocation', this.value)" 
-                class="w-20 text-center bg-slate-50 rounded-lg p-1 border-none text-sm font-medium focus:ring-2 focus:ring-emerald-500">
-            </td>
-            <td class="px-6 py-4 text-center">
-                <input type="number" value="${member.daysOff}" onchange="updateMember(${index}, 'daysOff', this.value)" 
-                class="w-20 text-center bg-slate-50 rounded-lg p-1 border-none text-sm font-medium focus:ring-2 focus:ring-emerald-500">
-            </td>
-            <td class="px-6 py-4 text-center font-bold text-slate-600" id="avail-${index}">0</td>
-            <td class="px-6 py-4 text-right">
-                <button onclick="removeRow(${index})" class="text-slate-300 hover:text-red-500 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                </button>
-            </td>
-        `;
-        body.appendChild(row);
-    });
-    calculate();
-}
-
-/**
- * Calculation Engine
- */
 function calculate() {
-    const sprintDays = Math.max(0, parseFloat(document.getElementById('sprintDays').value) || 0);
-    const holidays = Math.max(0, parseFloat(document.getElementById('publicHolidays').value) || 0);
+    const sprintDaysInput = document.getElementById('sprintDays');
+    const holidaysInput = document.getElementById('publicHolidays');
     const avgVelocity = Math.max(0, parseFloat(document.getElementById('avgVelocity').value) || 0);
+
+    let sprintDays = Math.max(0, parseFloat(sprintDaysInput.value) || 0);
+    let holidays = Math.max(0, parseFloat(holidaysInput.value) || 0);
+
+    if (holidays > sprintDays) {
+        showToast("⚠️ Holidays cannot exceed total sprint days");
+        holidays = sprintDays;
+        holidaysInput.value = holidays;
+    }
 
     const workingWindow = Math.max(0, sprintDays - holidays);
     let totalAvailableDays = 0;
@@ -181,122 +114,48 @@ function calculate() {
     team.forEach((member, index) => {
         const available = Math.max(0, (workingWindow - member.daysOff) * (member.allocation / 100));
         const cell = document.getElementById(`avail-${index}`);
-        // parseFloat removes trailing .0
-        if (cell) cell.innerText = parseFloat(available.toFixed(1));
+        if (cell) cell.innerText = formatNum(available);
         totalAvailableDays += available;
     });
 
-    const baselinePotential = team.length * sprintDays;
-    const capacityPerc = baselinePotential > 0 ? (totalAvailableDays / baselinePotential) : 0;
-    const planVelocity = avgVelocity * capacityPerc;
+    const baselinePotential = team.length * (sprintDays || 1);
+    const capacityRatio = totalAvailableDays / (baselinePotential || 1);
+    const capacityPerc = capacityRatio * 100;
+    const planVelocity = avgVelocity * capacityRatio;
 
-    updateDashboard(totalAvailableDays, capacityPerc, planVelocity);
-    saveState();
-}
-
-function updateDashboard(totalDays, capacity, plan) {
-    const velocityText = document.getElementById('resPlanVelocity');
-    const bar = document.getElementById('capacityBar');
-
-    // parseFloat removes trailing .0
-    document.getElementById('resTotalDays').innerText = parseFloat(totalDays.toFixed(1)) + ' Days';
-    document.getElementById('resCapacity').innerText = (capacity * 100).toFixed(0) + '%';
-    velocityText.innerText = parseFloat(plan.toFixed(1));
-
-    const perc = capacity * 100;
-    bar.style.width = Math.min(100, perc) + '%';
+    document.getElementById('resTotalDays').innerText = `${formatNum(totalAvailableDays)} Days`;
+    document.getElementById('resCapacity').innerText = Math.round(capacityPerc) + '%';
+    
+    const velocityEl = document.getElementById('resPlanVelocity');
+    velocityEl.innerText = Math.round(planVelocity);
 
     let statusColor = "#ef4444"; 
-    if (perc >= 75) statusColor = "#10b981"; 
-    else if (perc >= 50) statusColor = "#f97316"; 
+    if (capacityPerc >= 75) statusColor = "#10b981";
+    else if (capacityPerc >= 50) statusColor = "#f97316";
 
-    bar.style.backgroundColor = statusColor;
-    velocityText.style.color = statusColor;
-}
-
-/**
- * Member Management
- */
-function updateMember(index, field, value) {
-    if (field === 'name') {
-        team[index].name = value || "New Member";
-        saveState();
-    } else {
-        let num = parseFloat(value) || 0;
-        if (num < 0) {
-            showToast("⚠️ Values cannot be negative.");
-            num = 0;
-        }
-        if (field === 'allocation' && num > 100) {
-            showToast("⚠️ Allocation capped at 100%.");
-            num = 100;
-        }
-        // Limit Days Off to Sprint Length
-        if (field === 'daysOff') {
-            const sprintLength = parseFloat(document.getElementById('sprintDays').value) || 0;
-            if (num > sprintLength) {
-                showToast(`⚠️ Days off capped at Sprint Length (${sprintLength} days).`);
-                num = sprintLength;
-            }
-        }
-        team[index][field] = num;
-        renderTable();
+    const bar = document.getElementById('capacityBar');
+    if (bar) {
+        bar.style.width = Math.min(100, capacityPerc) + '%';
+        bar.style.backgroundColor = statusColor;
+        bar.style.backgroundImage = 'none'; 
     }
-}
-
-function addRow() {
-    team.push({ name: 'New Member', allocation: 100, daysOff: 0 });
-    renderTable();
+    velocityEl.style.color = statusColor;
+    
     saveState();
 }
 
-function removeRow(index) {
-    if (team.length > 1) {
-        team.splice(index, 1);
-        renderTable();
-        saveState();
-    } else {
-        showToast("⚠️ Team must have at least one member.");
-    }
-}
-
-/**
- * Validation Logic
- */
-function validateGlobal(input) {
-    let val = parseFloat(input.value) || 0;
-    const sprintDaysInput = document.getElementById('sprintDays');
-
-    if (val < 0) {
-        showToast("⚠️ Values cannot be negative.");
-        input.value = 0;
-    }
-
-    // Clamp existing team daysOff if sprint length decreases
-    if (input.id === 'sprintDays') {
-        team.forEach(member => {
-            if (member.daysOff > val) member.daysOff = val;
-        });
-        renderTable();
-    }
-
-    if (input.id === 'publicHolidays' && val > parseFloat(sprintDaysInput.value)) {
-        showToast("⚠️ Holidays cannot exceed Sprint Days.");
-        input.value = sprintDaysInput.value;
-    }
-    calculate();
-}
-
-/**
- * PDF Export logic
- */
 function exportToPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    const teamNameInput = document.getElementById('teamName').value.trim().substring(0, 50);
+    const teamNameInput = document.getElementById('teamName').value.trim().substring(0, 25);
     const teamDisplayName = teamNameInput || "Team";
-    const primaryEmerald = [16, 185, 129]; 
+    
+    // UPDATED: Lighter Green branding for PDF (Emerald 400)
+    const primaryEmerald = [52, 211, 153]; 
+    
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
 
     doc.setFontSize(22);
     doc.setTextColor(primaryEmerald[0], primaryEmerald[1], primaryEmerald[2]);
@@ -305,13 +164,15 @@ function exportToPDF() {
 
     doc.setFontSize(10);
     doc.setTextColor(100, 116, 139);
-    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 28);
+    const dateRange = (startDate && endDate) ? ` (${startDate} to ${endDate})` : "";
+    doc.text(`Generated on ${new Date().toLocaleDateString()}${dateRange}`, 14, 28);
 
     doc.autoTable({
         startY: 35,
         head: [['Sprint Metric', 'Value']],
         body: [
-            ['Sprint Length', document.getElementById('sprintDays').value + ' Days'],
+            ['Sprint Duration', (startDate && endDate) ? `${startDate} - ${endDate}` : 'Not Specified'],
+            ['Sprint Working Days', document.getElementById('sprintDays').value + ' Days'],
             ['Public Holidays', document.getElementById('publicHolidays').value + ' Days'],
             ['Calculated Capacity', document.getElementById('resCapacity').innerText],
             ['Recommended Velocity', document.getElementById('resPlanVelocity').innerText + ' Story Points']
@@ -328,7 +189,7 @@ function exportToPDF() {
         m.name,
         m.allocation + '%',
         m.daysOff,
-        parseFloat((Math.max(0, workingWindow - m.daysOff) * (m.allocation / 100)).toFixed(1))
+        formatNum(Math.max(0, workingWindow - m.daysOff) * (m.allocation / 100))
     ]);
 
     doc.autoTable({
@@ -348,14 +209,132 @@ function exportToPDF() {
     doc.save(`Sprint_Capacity_Report_${teamDisplayName.replace(/\s+/g, '_')}.pdf`);
 }
 
-/**
- * Helper Utilities
- */
-function resetToDefault() {
-    if (confirm("Reset all data? This cannot be undone.")) {
-        localStorage.removeItem('sprintPlannerState');
-        window.location.href = window.location.pathname;
+function updateMember(index, field, value) {
+    if (field === 'name') {
+        team[index].name = value.trim() ? value.substring(0, 25) : "Member " + (index + 1);
+    } else if (field === 'allocation') {
+        team[index].allocation = Math.min(100, Math.max(0, parseFloat(value) || 0));
+    } else if (field === 'daysOff') {
+        const sprintDays = parseFloat(document.getElementById('sprintDays').value) || 0;
+        let val = parseFloat(value) || 0;
+        
+        if (val < 0) {
+            val = 0;
+            showToast("⚠️ Days off cannot be negative");
+        } else if (val > sprintDays) {
+            val = sprintDays;
+            showToast(`⚠️ Days off cannot exceed sprint length (${sprintDays} days)`);
+        }
+        team[index].daysOff = val;
     }
+    renderTable();
+}
+
+function shareConfiguration() {
+    const state = {
+        n: document.getElementById('teamName').value,
+        sd: document.getElementById('startDate').value,
+        ed: document.getElementById('endDate').value,
+        s: document.getElementById('sprintDays').value,
+        h: document.getElementById('publicHolidays').value,
+        v: document.getElementById('avgVelocity').value,
+        t: team.map(m => `${encodeURIComponent(m.name)}|${m.allocation}|${m.daysOff}`)
+    };
+    const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?plan=${encodedData}`;
+    navigator.clipboard.writeText(shareUrl).then(() => showToast("🔗 Clean share link copied!"));
+}
+
+function loadState() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('plan')) {
+        try {
+            const decodedData = JSON.parse(decodeURIComponent(escape(atob(params.get('plan')))));
+            document.getElementById('teamName').value = decodedData.n || "";
+            if (decodedData.sd) startPicker.setDate(decodedData.sd);
+            if (decodedData.ed) endPicker.setDate(decodedData.ed);
+            document.getElementById('sprintDays').value = decodedData.s || 15;
+            document.getElementById('publicHolidays').value = decodedData.h || 0;
+            document.getElementById('avgVelocity').value = decodedData.v || 45;
+            if (decodedData.t) {
+                team = decodedData.t.map(str => {
+                    const [name, allocation, daysOff] = str.split('|');
+                    return { name: decodeURIComponent(name), allocation: parseFloat(allocation), daysOff: parseFloat(daysOff) };
+                });
+            }
+            window.history.replaceState(null, null, window.location.pathname);
+            showToast("✅ Shared plan loaded!");
+        } catch (e) { console.error(e); }
+    }
+
+    const localData = localStorage.getItem('sprintPlannerState');
+    if (localData) {
+        try {
+            const savedData = JSON.parse(localData);
+            document.getElementById('teamName').value = savedData.teamName || "";
+            updateMainHeader(savedData.teamName || "");
+            if (savedData.startDate) startPicker.setDate(savedData.startDate);
+            if (savedData.endDate) endPicker.setDate(savedData.endDate);
+            document.getElementById('sprintDays').value = savedData.sprintDays || 15;
+            document.getElementById('publicHolidays').value = savedData.holidays || 0;
+            document.getElementById('avgVelocity').value = savedData.velocity || 45;
+            team = savedData.team || team;
+        } catch(e) { console.error(e); }
+    }
+}
+
+function renderTable() {
+    const body = document.getElementById('teamBody');
+    if (!body) return;
+    body.innerHTML = '';
+
+    team.forEach((member, index) => {
+        const row = document.createElement('tr');
+        row.className = "row-hover transition-colors";
+        row.innerHTML = `
+            <td class="px-6 py-4">
+                <input type="text" value="${member.name}" maxlength="25" onchange="updateMember(${index}, 'name', this.value)" 
+                class="w-full bg-transparent font-semibold border-none focus:ring-0 px-1">
+            </td>
+            <td class="px-6 py-4 text-center">
+                <input type="number" step="1" value="${member.allocation}" onchange="updateMember(${index}, 'allocation', this.value)" 
+                class="w-24 text-center bg-slate-50 rounded-lg p-1 border-none focus:ring-1 focus:ring-emerald-500">
+            </td>
+            <td class="px-6 py-4 text-center">
+                <input type="number" step="1" value="${member.daysOff}" onchange="updateMember(${index}, 'daysOff', this.value)" 
+                class="w-24 text-center bg-slate-50 rounded-lg p-1 border-none focus:ring-1 focus:ring-emerald-500">
+            </td>
+            <td class="px-6 py-4 text-center font-bold text-slate-600" id="avail-${index}">0</td>
+            <td class="px-6 py-4 text-right">
+                <button onclick="removeRow(${index})" class="text-slate-300 hover:text-red-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            </td>
+        `;
+        body.appendChild(row);
+    });
+    calculate();
+}
+
+function saveState() {
+    const stateToSave = {
+        teamName: document.getElementById('teamName').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        sprintDays: document.getElementById('sprintDays').value,
+        holidays: document.getElementById('publicHolidays').value,
+        velocity: document.getElementById('avgVelocity').value,
+        team: team
+    };
+    localStorage.setItem('sprintPlannerState', JSON.stringify(stateToSave));
+}
+
+function updateMainHeader(name) {
+    const cleanName = name.trim().substring(0, 25);
+    const newTitle = cleanName ? `Sprint Planner | ${cleanName}` : "Sprint Capacity Planner";
+    const h1 = document.querySelector('h1');
+    if (h1) h1.innerText = newTitle;
+    document.title = newTitle; 
 }
 
 function showToast(message) {
@@ -363,10 +342,14 @@ function showToast(message) {
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `<span>${message}</span>`;
+    toast.innerText = message;
     container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.animation = 'toastOut 0.3s ease-in forwards';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    setTimeout(() => toast.remove(), 3000);
 }
+
+function addRow() { team.push({ name: 'New Member', allocation: 100, daysOff: 0 }); renderTable(); }
+function removeRow(index) {
+    if (team.length > 1) { team.splice(index, 1); renderTable(); } 
+    else { showToast("⚠️ Team must have at least one member"); }
+}
+function resetToDefault() { if (confirm("Reset all data?")) { localStorage.removeItem('sprintPlannerState'); window.location.reload(); } }
