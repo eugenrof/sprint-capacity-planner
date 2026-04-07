@@ -169,25 +169,31 @@ body {
 
 .input-group input {
     width: 100%; 
+    height: 45px; /* Fixed height for perfect alignment across types */
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #e2e8f0; border-radius: 0.75rem;
-    padding: 0.65rem 0.9rem; font-weight: 500;
+    padding: 0 0.9rem; /* Vertically centered by height + no top/bottom padding */
+    font-weight: 500;
     transition: all 0.2s ease; color: #1e293b;
-    font-size: 16px; /* Prevents iOS zoom */
+    font-size: 16px; 
+    display: flex;
+    align-items: center;
 }
 
-/* Force Spin Buttons (Up/Down) to be always visible */
+/* Force Spin Buttons (Up/Down) visibility and alignment */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button !important;
     opacity: 1 !important;
+    height: 100%;
 }
 
-/* Force Calendar Icon to be always visible */
+/* Force Calendar Icon visibility and alignment */
 input::-webkit-calendar-picker-indicator {
     opacity: 1 !important;
     display: block !important;
     cursor: pointer;
+    margin-left: 10px;
 }
 
 /* Unified Placeholder Styling */
