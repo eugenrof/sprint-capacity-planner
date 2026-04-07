@@ -17,7 +17,7 @@
     --teal-main: #0d9488;
     --glass-bg: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.5);
-    --transition-standard: all 0.2s ease-in-out;
+    --transition-standard: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -32,6 +32,21 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+}
+
+/* --- Mobile Responsiveness Enhancements --- */
+@media (max-width: 768px) {
+    .glass {
+        padding: 1.25rem !important; 
+    }
+    
+    .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    header h1 {
+        font-size: 1.85rem !important;
+    }
 }
 
 /* --- Glassmorphism Effect --- */
@@ -53,115 +68,16 @@ body {
     box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
 }
 
-.glass:hover label {
-    color: var(--emerald-main);
-    transition: color 0.3s ease;
+/* --- Forced Spinner Visibility --- */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1 !important;
+    margin-left: 5px;
 }
 
-/* --- Typography --- */
-.gradient-text {
-    background: linear-gradient(135deg, var(--emerald-main) 0%, var(--teal-main) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
-}
-
-/* --- Buttons (Flicker-Free) --- */
-.btn-primary, .btn-export, .btn-share {
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s ease;
-    backface-visibility: hidden;
-    transform: translateZ(0);
-}
-
-.btn-primary {
-    background: var(--emerald-main);
-    color: white;
-    padding: 0.75rem 1.75rem;
-    border-radius: 0.75rem;
-    font-weight: 700;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-}
-
-.btn-primary:hover {
-    background: var(--emerald-hover);
-    transform: scale(1.02);
-    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
-}
-
-.btn-primary::after {
-    content: "";
-    position: absolute;
-    top: -50%; left: -60%; width: 20%; height: 200%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(30deg);
-    transition: all 0.6s ease;
-}
-.btn-primary:hover::after { left: 120%; }
-
-.btn-export {
-    background: rgba(16, 185, 129, 0.15) !important;
-    color: #1e293b !important;
-    padding: 0.75rem 1.75rem;
-    border-radius: 0.75rem;
-    font-weight: 700;
-    border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.btn-export:hover {
-    background: rgba(16, 185, 129, 0.25) !important;
-    transform: scale(1.02);
-    border-color: var(--emerald-main) !important;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
-}
-
-.btn-export svg { color: #334155 !important; }
-
-/* --- Reset Button (Dark Slate to Red Hover) --- */
-.btn-reset {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    
-    /* Default: High-Visibility Dark Slate */
-    color: #334155; 
-    background: #e2e8f0; 
-    border: 1.5px solid #94a3b8;
-    
-    border-radius: 0.75rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.btn-reset:hover {
-    /* Hover: Transition to Warning Red */
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #ef4444;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
-    transform: scale(1.03);
-}
-
-.btn-reset svg {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    stroke: currentColor;
-}
-
-.btn-reset:hover svg {
-    transform: rotate(-180deg);
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 /* --- Form Inputs --- */
@@ -175,39 +91,125 @@ body {
 
 .input-group input {
     width: 100%; 
+    height: 52px;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #e2e8f0; border-radius: 0.75rem;
-    padding: 0.65rem 0.9rem; font-weight: 500;
-    transition: all 0.2s ease; color: #1e293b;
-    -webkit-appearance: none;
+    padding: 0 1rem; font-weight: 500;
+    transition: var(--transition-standard); color: #1e293b;
     font-size: 16px; 
 }
 
 input:focus {
     outline: none !important;
-    border-color: #10b981 !important;
+    border-color: var(--emerald-main) !important;
     background-color: #ffffff !important;
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
 }
 
-/* --- Table Styles --- */
+/* --- Typography --- */
+.gradient-text {
+    background: linear-gradient(135deg, var(--emerald-main) 0%, var(--teal-main) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* --- Buttons --- */
+.btn-primary, .btn-export, .btn-share {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-standard);
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    height: 52px;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background: var(--emerald-main);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--emerald-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+}
+
+/* Shimmering shine effect */
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: -50%; left: -60%; width: 20%; height: 200%;
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+}
+.btn-primary:hover::after { left: 120%; }
+
+.btn-export, .btn-share {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #1e293b !important;
+    border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-export:hover, .btn-share:hover {
+    background: rgba(16, 185, 129, 0.2) !important;
+    border-color: var(--emerald-main) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+/* --- Table Styles (Fully Centered) --- */
 thead th {
     background-color: #f8fafc !important;
     border-bottom: 2px solid #e2e8f0 !important;
     color: #475569 !important;
-    letter-spacing: 0.05em;
+    font-size: 0.7rem;
+    padding: 1rem 0.5rem;
+    text-align: center !important; 
 }
 
-.row-hover:hover { 
-    background-color: rgba(16, 185, 129, 0.08); 
+#teamBody tr td {
+    padding: 0.75rem 0.5rem;
+    text-align: center !important;
+}
+
+th:first-child, td:first-child {
+    text-align: center !important;
+}
+
+/* Custom Table Input Styling */
+#teamBody input {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    padding: 0.4rem;
+    height: 38px;
+    transition: var(--transition-standard);
+    text-align: center; 
+    width: 100%;
+}
+
+#teamBody tr:hover input {
+    border-color: #e2e8f0;
+    background: #ffffff;
 }
 
 /* --- Progress Bar --- */
 .progress-container {
-    width: 100%; background: rgba(0, 0, 0, 0.1);
+    width: 100%; background: #e2e8f0;
     border-radius: 9999px; height: 0.75rem;
     overflow: hidden; margin: 12px 0;
-    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .progress-bar {
@@ -224,9 +226,10 @@ thead th {
 
 /* --- Toast Notifications --- */
 .toast {
-    background: rgba(239, 68, 68, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #1e293b;
     color: white; padding: 1rem 1.5rem; border-radius: 1rem;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-left: 4px solid var(--emerald-main);
 }
