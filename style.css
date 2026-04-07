@@ -37,15 +37,26 @@ body {
 /* --- Mobile Responsiveness Enhancements --- */
 @media (max-width: 768px) {
     .glass {
-        padding: 1.25rem !important; 
+        padding: 1rem !important; 
     }
     
     .overflow-x-auto {
         -webkit-overflow-scrolling: touch;
+        margin: 0 -0.5rem; /* Better table spacing on mobile */
     }
 
     header h1 {
-        font-size: 1.85rem !important;
+        font-size: 1.75rem !important;
+    }
+
+    /* Fix for iOS Date Input Overflow */
+    input[type="date"], 
+    input[type="text"], 
+    input[type="number"] {
+        width: 100% !important;
+        max-width: 100% !important; /* Forces alignment */
+        min-width: 0 !important;    /* Prevents grid blowout */
+        font-size: 16px !important; /* Prevents auto-zoom on iOS */
     }
 }
 
@@ -60,7 +71,6 @@ body {
     transition: var(--transition-standard);
     will-change: box-shadow, border-color;
     overflow: hidden;
-    backface-visibility: hidden;
 }
 
 .glass:hover {
@@ -75,7 +85,6 @@ input::-webkit-inner-spin-button {
     opacity: 1 !important;
     display: block !important;
     cursor: pointer;
-    /* Forces the button to be taller and visible */
     height: 30px;
     width: 16px;
     margin-left: 2px;
@@ -86,7 +95,10 @@ input[type=number] {
 }
 
 /* --- Form Inputs --- */
-.input-group { width: 100%; }
+.input-group { 
+    width: 100%; 
+    min-width: 0; /* Important for flex/grid children */
+}
 
 .input-group label {
     display: block; font-size: 0.7rem; font-weight: 800;
@@ -102,6 +114,14 @@ input[type=number] {
     padding: 0 1rem; font-weight: 500;
     transition: var(--transition-standard); color: #1e293b;
     font-size: 16px; 
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
+}
+
+/* Fix for date input specifically on iOS */
+input[type="date"] {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
 }
 
 input:focus {
@@ -173,9 +193,9 @@ input:focus {
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
-/* --- Table Styles (Grayed Header & Centered) --- */
+/* --- Table Styles --- */
 thead th {
-    background-color: #f1f5f9 !important; /* Deepened Gray Header */
+    background-color: #f1f5f9 !important;
     border-bottom: 2px solid #cbd5e1 !important;
     color: #475569 !important;
     font-size: 0.7rem;
@@ -189,7 +209,6 @@ thead th {
     transition: background-color 0.2s ease;
 }
 
-/* Row Hover Color (Light Emerald Tint) */
 #teamBody tr:hover {
     background-color: rgba(16, 185, 129, 0.05) !important;
 }
@@ -203,13 +222,11 @@ th:first-child, td:first-child {
     text-align: center !important;
 }
 
-/* Custom Table Input Styling */
 #teamBody input {
     background: transparent;
     border: 1px solid transparent;
     border-radius: 0.5rem;
     padding: 0.4rem;
-    /* Added padding to the right to accommodate larger spinners */
     padding-right: 1.5rem;
     height: 38px;
     transition: var(--transition-standard);
