@@ -6,6 +6,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/* Basic reset to ensure padding doesn't cause overflow */
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --emerald-main: #059669;
     --emerald-hover: #047857;
@@ -142,7 +147,6 @@ body {
 /* --- Form Inputs (Responsive Fix) --- */
 .input-group {
     width: 100%;
-    box-sizing: border-box;
 }
 
 .input-group label {
@@ -157,7 +161,9 @@ body {
     border: 1px solid #e2e8f0; border-radius: 0.75rem;
     padding: 0.65rem 0.9rem; font-weight: 500;
     transition: all 0.2s ease; color: #1e293b;
-    box-sizing: border-box; /* Prevents input from expanding past container */
+    /* iPhone Fixes */
+    -webkit-appearance: none;
+    font-size: 16px; /* Prevents iOS auto-zoom shift */
 }
 
 input:focus {
@@ -179,22 +185,21 @@ thead th {
     background-color: rgba(16, 185, 129, 0.08); 
 }
 
-/* --- Timeline Wrapper (Mobile Logic) --- */
+/* --- Timeline Wrapper (Responsive Logic) --- */
 .timeline-wrapper {
     background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(8px);
-    padding: 1rem; /* Slightly tighter on mobile to save space */
+    padding: 1rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr); /* Prevents overflow */
+    grid-template-columns: 1fr; /* Stacked by default for iPhone/Mobile */
     gap: 1rem;
     position: relative;
     width: 100%;
-    box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
     .timeline-wrapper { 
-        grid-template-columns: 1fr 1fr; 
+        grid-template-columns: 1fr 1fr; /* Side-by-side for Desktop */
         gap: 2rem; 
         padding: 1.25rem;
     }
