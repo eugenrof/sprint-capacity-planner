@@ -17,7 +17,6 @@
     --teal-main: #0d9488;
     --glass-bg: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.5);
-    /* Smoother transition without the "bounce" to prevent flickers */
     --transition-standard: all 0.2s ease-in-out;
 }
 
@@ -49,7 +48,6 @@ body {
     backface-visibility: hidden;
 }
 
-/* Removed translateY to prevent flicker on card edges */
 .glass:hover {
     border-color: rgba(16, 185, 129, 0.4);
     box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
@@ -75,10 +73,9 @@ body {
     overflow: hidden;
     transition: all 0.2s ease;
     backface-visibility: hidden;
-    transform: translateZ(0); /* Hardware acceleration */
+    transform: translateZ(0);
 }
 
-/* Removed translateY. Added a subtle scale and shadow increase instead. */
 .btn-primary {
     background: var(--emerald-main);
     color: white;
@@ -127,6 +124,39 @@ body {
 
 .btn-export svg { color: #334155 !important; }
 
+/* --- Reset Button (New High-Visibility Style) --- */
+.btn-reset {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ef4444; 
+    background: rgba(239, 68, 68, 0.08);
+    border: 1.5px solid rgba(239, 68, 68, 0.2);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-reset:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    transform: scale(1.03);
+}
+
+.btn-reset svg {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-reset:hover svg {
+    transform: rotate(-180deg);
+}
+
 /* --- Form Inputs --- */
 .input-group { width: 100%; }
 
@@ -143,7 +173,7 @@ body {
     padding: 0.65rem 0.9rem; font-weight: 500;
     transition: all 0.2s ease; color: #1e293b;
     -webkit-appearance: none;
-    font-size: 16px; /* iPhone fix */
+    font-size: 16px; 
 }
 
 input:focus {
