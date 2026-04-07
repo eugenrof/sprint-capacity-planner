@@ -145,7 +145,6 @@ input:focus {
     box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
 }
 
-/* Shimmering shine effect */
 .btn-primary::after {
     content: "";
     position: absolute;
@@ -169,14 +168,16 @@ input:focus {
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
-/* --- Table Styles (Fully Centered) --- */
+/* --- Table Styles (Grayed Header & Centered) --- */
 thead th {
-    background-color: #f8fafc !important;
-    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important; /* Deepened Gray Header */
+    border-bottom: 2px solid #cbd5e1 !important;
     color: #475569 !important;
     font-size: 0.7rem;
-    padding: 1rem 0.5rem;
+    padding: 1.1rem 0.5rem;
     text-align: center !important; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 #teamBody tr td {
