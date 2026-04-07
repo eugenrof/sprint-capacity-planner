@@ -169,37 +169,44 @@ body {
 
 .input-group input {
     width: 100%; 
-    height: 45px; /* Fixed height for perfect alignment across types */
+    height: 48px;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #e2e8f0; border-radius: 0.75rem;
-    padding: 0 0.9rem; /* Vertically centered by height + no top/bottom padding */
+    padding: 0 1rem;
     font-weight: 500;
     transition: all 0.2s ease; color: #1e293b;
     font-size: 16px; 
+    
+    /* Center text visually */
+    text-align: center;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-/* Force Spin Buttons (Up/Down) visibility and alignment */
+/* Compensate for the icon on the right to keep text centered */
+input[type="date"] {
+    padding-left: 40px; /* Adjust this value if needed to "push" the text back to center */
+}
+
+/* Force Spin Buttons (Up/Down) visibility */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button !important;
     opacity: 1 !important;
-    height: 100%;
 }
 
-/* Force Calendar Icon visibility and alignment */
+/* Force Calendar Icon visibility and placement */
 input::-webkit-calendar-picker-indicator {
     opacity: 1 !important;
     display: block !important;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: auto; /* Pushes the icon to the far right */
 }
 
 /* Unified Placeholder Styling */
-::placeholder { color: #94a3b8; opacity: 1; }
-::-webkit-input-placeholder { color: #94a3b8; }
-::-ms-input-placeholder { color: #94a3b8; }
+::placeholder { color: #94a3b8; opacity: 1; text-align: center; }
+::-webkit-input-placeholder { color: #94a3b8; text-align: center; }
 
 input:focus {
     outline: none !important;
