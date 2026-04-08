@@ -186,7 +186,7 @@ function saveState() {
  */
 function updateMainHeader(name) {
     const cleanName = name.trim().substring(0, 25);
-    const newTitle = cleanName ? `Sprint Planner | ${cleanName}` : "Sprint Capacity Planner";
+    const newTitle = cleanName ? `Sprint Pulse | ${cleanName}` : "Sprint Pulse Planner";
     const h1 = document.querySelector('h1');
     if (h1) h1.innerText = newTitle;
     document.title = newTitle; 
