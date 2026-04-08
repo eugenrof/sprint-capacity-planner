@@ -1,8 +1,7 @@
 /**
  * Sprint Capacity Planner - Stylesheet
  * Author: Eugen Rof
- * Theme: Glassmorphism Emerald (Flatpickr Integrated)
- * Updates: Visible number spinners & Dynamic progress bar colors
+ * Updates: Disabled scroll-to-change on numbers & Toast Stack Prevention logic
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -95,31 +94,29 @@ body {
     font-family: "Inter", sans-serif !important;
 }
 
+/* Fix for iOS Flatpickr Alignment */
+.flatpickr-calendar.static {
+    margin-left: 0 !important;
+    left: auto !important;
+}
+
 .flatpickr-day.selected, .flatpickr-day.selected:hover {
     background: var(--emerald-main) !important;
     border-color: var(--emerald-main) !important;
 }
 
-.flatpickr-day:hover {
-    background: rgba(16, 185, 129, 0.1) !important;
-}
-
-.flatpickr-months .flatpickr-month {
-    color: #1e293b !important;
-    fill: #1e293b !important;
-}
-
 /* --- Form Inputs & Spinners --- */
-/* Force number input arrows (spinners) to be always visible */
+/* FIX: We hide the spinners by default because they often trigger 
+   unwanted value changes during scrolling on touchpads and mobile.
+*/
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-    opacity: 1 !important;
-    margin-left: 5px;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-/* Firefox support for visible spinners */
 input[type="number"] {
-    -moz-appearance: number-input;
+    -moz-appearance: textfield; /* Firefox */
 }
 
 .input-group label {
@@ -170,21 +167,28 @@ thead th {
     transition: transform 0.3s ease;
 }
 
-/* Removed linear-gradient to allow script.js to set dynamic background-color */
 #capacityBar {
     height: 100%;
     transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.4s ease;
 }
 
 /* --- Toast Notifications --- */
+#toastContainer {
+    pointer-events: none; /* Allows clicks to pass through container gaps */
+}
+
 .toast {
+    pointer-events: auto;
     background: #1e293b;
     color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
     font-weight: 600;
+    font-size: 0.85rem;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     animation: slideUp 0.3s ease-out;
+    margin-top: 0.5rem;
+    border-left: 4px solid #ef4444; /* Red indicator for errors */
 }
 
 @keyframes slideUp {
@@ -198,4 +202,3 @@ thead th {
     background-color: #cbd5e1; 
     border-radius: 20px;
 }
-
