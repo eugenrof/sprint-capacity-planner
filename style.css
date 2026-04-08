@@ -1,7 +1,7 @@
 /**
  * Sprint Capacity Planner - Stylesheet
  * Author: Eugen Rof
- * Updates: Disabled scroll-to-change on numbers & Toast Stack Prevention logic
+ * Updates: Restored number spinners, kept iOS alignment & scroll protection
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -94,7 +94,6 @@ body {
     font-family: "Inter", sans-serif !important;
 }
 
-/* Fix for iOS Flatpickr Alignment */
 .flatpickr-calendar.static {
     margin-left: 0 !important;
     left: auto !important;
@@ -106,17 +105,18 @@ body {
 }
 
 /* --- Form Inputs & Spinners --- */
-/* FIX: We hide the spinners by default because they often trigger 
-   unwanted value changes during scrolling on touchpads and mobile.
-*/
+
+/* Restoring number spinners for Chrome, Safari, Edge, Opera */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1 !important;
 }
 
+/* Restoring number spinners for Firefox */
 input[type="number"] {
-    -moz-appearance: textfield; /* Firefox */
+    -moz-appearance: number-input !important;
+    appearance: auto !important;
 }
 
 .input-group label {
@@ -174,7 +174,7 @@ thead th {
 
 /* --- Toast Notifications --- */
 #toastContainer {
-    pointer-events: none; /* Allows clicks to pass through container gaps */
+    pointer-events: none; 
 }
 
 .toast {
@@ -188,7 +188,7 @@ thead th {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     animation: slideUp 0.3s ease-out;
     margin-top: 0.5rem;
-    border-left: 4px solid #ef4444; /* Red indicator for errors */
+    border-left: 4px solid #ef4444;
 }
 
 @keyframes slideUp {
