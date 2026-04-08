@@ -310,10 +310,14 @@ function formatNum(num) {
 }
 
 function addRow() { 
-    // Calculate the next number based on the current length
+    // SCRUM VALIDATION: Limit to 10 members
+    if (team.length >= 10) {
+        showToast("⚠️ Scrum teams typically shouldn't exceed 10 members for optimal agility");
+        // We return early so the member isn't actually added
+        return; 
+    }
+
     const nextNumber = team.length + 1;
-    
-    // Use a template literal to create the name "Member X"
     team.push({ 
         name: `Member ${nextNumber}`, 
         allocation: 100, 
@@ -321,7 +325,7 @@ function addRow() {
     }); 
     
     renderTable(); 
-    saveState(); // Ensure the new member is saved to local storage
+    saveState();
 }
 
 function removeRow(index) {
