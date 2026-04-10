@@ -2,7 +2,7 @@
  * Sprint Capacity Planner
  * Author: Eugen Rof
  * Year: 2026
- * Updates: Adaptive Toasts for Add/Remove, Success/Warning styling, and bug fixes.
+ * Updates: Adaptive Toasts, Stacking Context fix for DatePickers.
  */
 
 let team = [
@@ -16,14 +16,18 @@ let team = [
 let startPicker, endPicker;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Flatpickr
+    // 1. Initialize Flatpickr with body-append fix
     const commonConfig = {
         altInput: true,
         altFormat: "F j, Y",
         dateFormat: "Y-m-d",
         disableMobile: true,
-        static: true,
-        position: "auto left"
+        static: false, // Changed to false to allow body appending
+        appendTo: document.body, // Moves calendar to the top layer of the DOM
+        position: "auto",
+        onOpen: function(selectedDates, dateStr, instance) {
+            instance.calendarContainer.style.zIndex = "999999";
+        }
     };
 
     startPicker = flatpickr("#startDate", {
